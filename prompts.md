@@ -51,3 +51,9 @@ Run with Claude Opus 4.8 with Autopilot approvals
 Run with Claude Opus 4.8 with Autopilot approvals
 
 > Let's add a very short readme quickly explaining what's happening here. It should not read like LLM garbage, it should be very short and to the point.
+
+## Eigth run
+
+Run with Claude Opus 4.8 with Autopilot approvals
+
+> Add a github action to daily update the models.js file.
