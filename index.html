@@ -3,25 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <style>
-    body {
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: #0d1117;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: #e6edf3;
-    }
-    h1 {
-      font-size: 3rem;
-      letter-spacing: 0.05em;
-    }
-  </style>
+  <title>Copilot Pricing Analyzer · Break-even by total task cost</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Hello, World!</h1>
+  <header>
+    <div class="brand">
+      <img src="favicon.svg" alt="" width="26" height="26" />
+      <h1>Copilot Pricing Analyzer</h1>
+    </div>
+    <p>Cheapest <strong>total cost to finish a task</strong> wins — a pricier model can come out ahead if it needs fewer prompts.
+      <a href="https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing" target="_blank" rel="noopener">Pricing source</a>
+    </p>
+  </header>
+
+  <main class="wrap">
+    <!-- PROMINENT: chart -->
+    <section class="panel chart-panel">
+      <div id="chart"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <!-- Models + add -->
+    <section class="panel models-section">
+      <div class="models-head">
+        <h2>Prompts to finish task
+          <span class="hint">Drag the slider or type how many prompts each model needs.</span>
+        </h2>
+        <div class="add-inline">
+          <select id="modelPicker"></select>
+          <button id="addBtn">Add</button>
+          <button id="presetBtn" class="secondary" title="Load Sonnet 4.6 vs Opus 4.8">Example</button>
+        </div>
+      </div>
+      <div id="modelList"></div>
+      <p class="muted" id="emptyMsg">No models selected yet. Add one or load the example.</p>
+    </section>
+
+    <!-- Ranking -->
+    <section class="panel">
+      <h2>Total cost ranking</h2>
+      <div id="takeaway" class="takeaway" style="display:none"></div>
+      <table id="resultsTable">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Cost / prompt</th>
+            <th>Prompts</th>
+            <th>Total cost</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Less important: token profile config -->
+    <section class="panel config-panel">
+      <h2>Token profile <span class="hint">Estimated tokens per prompt for an agentic coding turn (like the prompts that built this app). Shared across all models. Per&nbsp;1M tokens.</span></h2>
+      <div class="config-grid">
+        <div>
+          <label>Input tokens <span class="muted">(new uncached context)</span></label>
+          <input type="number" id="tokIn" value="9000" min="0" step="500" />
+        </div>
+        <div>
+          <label>Cached input tokens <span class="muted">(re-read files &amp; history)</span></label>
+          <input type="number" id="tokCached" value="34000" min="0" step="500" />
+        </div>
+        <div>
+          <label>Cache write tokens <span class="muted">(Anthropic)</span></label>
+          <input type="number" id="tokCacheWrite" value="11000" min="0" step="500" />
+        </div>
+        <div>
+          <label>Output tokens <span class="muted">(code + explanation)</span></label>
+          <input type="number" id="tokOut" value="3500" min="0" step="500" />
+        </div>
+      </div>
+      <p class="note">Defaults reflect a typical agent turn: a short new instruction (~9K), a large slice of cached context — system prompt, tool definitions, conversation history and re-read source files (~34K) — fresh content written to the cache (~11K), and a few thousand output tokens of generated code and prose.</p>
+    </section>
+
+    <!-- The maths -->
+    <section class="panel maths-panel">
+      <h2>The maths <span class="hint">How every number on this page is computed.</span></h2>
+
+      <h3>1 · Cost of a single prompt</h3>
+      <p>Each model has four per-token prices (quoted per&nbsp;1M tokens): input <code>p<sub>in</sub></code>, cached input <code>p<sub>cache</sub></code>, cache&nbsp;write <code>p<sub>write</sub></code> and output <code>p<sub>out</sub></code>. With the shared token profile — <code>t<sub>in</sub></code>, <code>t<sub>cache</sub></code>, <code>t<sub>write</sub></code>, <code>t<sub>out</sub></code> tokens — the cost of one prompt is:</p>
+      <div class="formula">
+        cost<sub>prompt</sub> =
+        ( t<sub>in</sub>·p<sub>in</sub> + t<sub>cache</sub>·p<sub>cache</sub> + t<sub>write</sub>·p<sub>write</sub> + t<sub>out</sub>·p<sub>out</sub> ) / 1,000,000
+      </div>
+      <p>The division by 1,000,000 converts the per-1M prices into a per-token rate.</p>
+      <div class="derivation" id="derivPrompt"></div>
+
+      <h3>2 · Total cost of a task</h3>
+      <p>If a model needs <code>n</code> prompts to finish the task, its total cost is simply the per-prompt cost repeated:</p>
+      <div class="formula">
+        cost<sub>total</sub> = n · cost<sub>prompt</sub>
+      </div>
+      <p>This is the value the ranking sorts on — <strong>the cheapest total wins</strong>, even if its per-prompt price is higher, because it may need fewer prompts.</p>
+      <div class="derivation" id="derivTotal"></div>
+
+      <h3>3 · Break-even point</h3>
+      <p>Take the model with the highest per-prompt cost as the reference (call it <code>E</code>) and its chosen total <code>cost<sub>total</sub><sup>E</sup></code>. A cheaper-per-prompt model <code>C</code> reaches that same spend after:</p>
+      <div class="formula">
+        n<sub>break-even</sub> = cost<sub>total</sub><sup>E</sup> / cost<sub>prompt</sub><sup>C</sup>
+      </div>
+      <p>Read it as: if the cheaper model <code>C</code> needs <strong>more</strong> than <code>n<sub>break-even</sub></code> prompts to do what <code>E</code> does in its chosen number of prompts, the pricier model <code>E</code> is the better deal. On the chart this is where each cheaper model's cost line crosses the dashed reference line of the most expensive model.</p>
+      <div class="derivation" id="derivBreakeven"></div>
+    </section>
+  </main>
+
+  <script src="models.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
