@@ -9,9 +9,11 @@ function getProfile() {
     cached: +$("tokCached").value || 0,
     cacheWrite: +$("tokCacheWrite").value || 0,
     output: +$("tokOut").value || 0,
+    growth: +$("tokGrowth").value || 0,
   };
 }
 
+// Cost of a single isolated prompt (turn 1, before any history accumulates).
 function costPerPrompt(model, p) {
   return (
     (p.input * model.input) +
@@ -19,6 +21,41 @@ function costPerPrompt(model, p) {
     (p.cacheWrite * model.cacheWrite) +
     (p.output * model.output)
   ) / 1000000;
+}
+
+// Context explosion: each turn re-reads the conversation history that has piled
+// up so far (prior messages, tool results, re-read files) as cached input. After
+// k-1 previous turns the context has grown by (k-1)·growth cached tokens, so the
+// k-th prompt costs `base + (k-1)·delta`, where delta is the price of one growth
+// step's worth of cached reads.
+function growthStepCost(model, p) {
+  return (p.growth * model.cached) / 1000000;
+}
+
+function costAtPrompt(model, p, k) {
+  return costPerPrompt(model, p) + (k - 1) * growthStepCost(model, p);
+}
+
+// Cumulative cost of n prompts = n·base + delta·n(n-1)/2 (closed form of the
+// arithmetic series). Accepts fractional n for smooth chart curves.
+function cumulativeCost(model, p, n) {
+  const base = costPerPrompt(model, p);
+  const delta = growthStepCost(model, p);
+  return n * base + delta * (n * (n - 1)) / 2;
+}
+
+// Smallest n where the cheaper model's cumulative cost reaches `target` spend.
+// Solves (delta/2)n^2 + (base - delta/2)n - target = 0 for the positive root.
+function breakEvenPrompts(model, p, target) {
+  const base = costPerPrompt(model, p);
+  const delta = growthStepCost(model, p);
+  if (delta <= 0) return base > 0 ? target / base : Infinity;
+  const a = delta / 2;
+  const b = base - delta / 2;
+  const c = -target;
+  const disc = b * b - 4 * a * c;
+  if (disc < 0) return Infinity;
+  return (-b + Math.sqrt(disc)) / (2 * a);
 }
 
 function fmt(n) {
@@ -71,7 +108,7 @@ function renderModelList() {
     card.innerHTML =
       '<div class="minfo">' +
         '<div class="name">' + m.name + '</div>' +
-        '<div class="sub">' + m.provider + ' · ' + m.tier + ' · <span class="cpp">' + fmt(cpp) + '</span>/prompt</div>' +
+        '<div class="sub">' + m.provider + ' · ' + m.tier + ' · <span class="cpp">' + fmt(cpp) + '</span>/1st prompt</div>' +
       '</div>' +
       '<input type="range" min="1" max="20" step="1" value="' + Math.min(20, s.prompts) + '" data-range="' + m.id + '" />' +
       '<input class="promptnum" type="number" min="1" step="1" value="' + s.prompts + '" data-prompts="' + m.id + '" />' +
@@ -107,7 +144,8 @@ function computeRows() {
   return selected.map((s) => {
     const m = MODELS.find((x) => x.id === s.modelId);
     const cpp = costPerPrompt(m, p);
-    return { model: m, cpp: cpp, prompts: s.prompts, total: cpp * s.prompts };
+    const total = cumulativeCost(m, p, s.prompts);
+    return { model: m, cpp: cpp, prompts: s.prompts, total: total, avg: total / s.prompts };
   });
 }
 
@@ -126,7 +164,7 @@ function renderResults() {
       : '<span class="pill">+' + (((r.total - min) / min) * 100).toFixed(0) + '%</span>';
     tr.innerHTML =
       '<td>' + r.model.name + '</td>' +
-      '<td class="cpp">' + fmt(r.cpp) + '</td>' +
+      '<td class="cpp">' + fmt(r.avg) + '</td>' +
       '<td>' + r.prompts + '</td>' +
       '<td class="cpp">' + fmt(r.total) + '</td>' +
       '<td>' + badge + '</td>';
@@ -138,6 +176,7 @@ function renderResults() {
 function renderTakeaway(sorted) {
   const box = $("takeaway");
   if (sorted.length < 2) { box.style.display = "none"; return; }
+  const p = getProfile();
   const cheap = sorted[0];
   const next = sorted[1];
   const cheapestPerPrompt = sorted.slice().sort((a, b) => a.cpp - b.cpp)[0];
@@ -146,12 +185,12 @@ function renderTakeaway(sorted) {
     cheap.prompts + " prompt" + (cheap.prompts > 1 ? "s" : "") + "), beating " + next.model.name +
     " by " + (((next.total - cheap.total) / cheap.total) * 100).toFixed(0) + "%.";
   if (cheapestPerPrompt.model.id !== pricestPerPrompt.model.id) {
-    const breakeven = pricestPerPrompt.total / cheapestPerPrompt.cpp;
+    const breakeven = breakEvenPrompts(cheapestPerPrompt.model, p, pricestPerPrompt.total);
     msg += "<br><span class=\"muted\">Break-even:</span> " + pricestPerPrompt.model.name + " at " +
       pricestPerPrompt.prompts + " prompt" + (pricestPerPrompt.prompts > 1 ? "s" : "") +
       " costs the same as " + cheapestPerPrompt.model.name + " running <strong>" + breakeven.toFixed(1) +
       "</strong> prompts. If " + cheapestPerPrompt.model.name + " needs more than " + Math.floor(breakeven) +
-      " prompts, " + pricestPerPrompt.model.name + " wins.";
+      " prompts, " + pricestPerPrompt.model.name + " wins. <span class=\"muted\">Context growth makes each extra prompt cost more than the last.</span>";
   }
   box.innerHTML = msg;
   box.style.display = "block";
@@ -164,22 +203,25 @@ function renderChart() {
   legend.innerHTML = "";
   if (!rows.length) { chart.innerHTML = '<p class="muted">Add models to see the chart.</p>'; return; }
 
+  const p = getProfile();
   const W = 720, H = 240, pad = { l: 56, r: 24, t: 16, b: 38 };
 
-  // Most expensive model (by cost per prompt) is the break-even reference.
-  // Each cheaper-per-prompt model has its own break-even: how many prompts it
-  // would take to spend the same as the most expensive model's chosen total.
+  // Most expensive model (by first-prompt cost) is the break-even reference.
+  // Each cheaper model has its own break-even: how many prompts it would take to
+  // spend the same as the most expensive model's chosen total. With context
+  // explosion the cost curves bend upward, so break-even is solved, not divided.
   const expCpp = rows.slice().sort((a, b) => b.cpp - a.cpp)[0];
   const breakevens = rows
     .filter((r) => r.model.id !== expCpp.model.id && r.cpp > 0 && r.cpp < expCpp.cpp)
-    .map((r) => ({ row: r, x: expCpp.total / r.cpp }))
+    .map((r) => ({ row: r, x: breakEvenPrompts(r.model, p, expCpp.total) }))
+    .filter((b) => isFinite(b.x))
     .sort((a, b) => a.x - b.x);
   const maxBeX = breakevens.reduce((m, b) => Math.max(m, b.x), 0);
 
   // Focus the x-axis on the data region (chosen prompts + break-even), not a fixed width
   const maxPrompt = Math.max(...rows.map((r) => r.prompts));
   const xMax = Math.max(4, Math.ceil(Math.max(maxPrompt + 1, maxBeX * 1.3)));
-  const yMax = (Math.max(...rows.map((r) => r.cpp * xMax)) * 1.05) || 1;
+  const yMax = (Math.max(...rows.map((r) => cumulativeCost(r.model, p, xMax))) * 1.05) || 1;
 
   const xScale = (x) => pad.l + (x / xMax) * (W - pad.l - pad.r);
   const yScale = (y) => H - pad.b - (y / yMax) * (H - pad.t - pad.b);
@@ -201,12 +243,16 @@ function renderChart() {
   }
   svg += '<text x="' + ((pad.l + W - pad.r) / 2) + '" y="' + (H - 6) + '" fill="#8b949e" font-size="9" text-anchor="middle">Prompts to finish task</text>';
 
-  // Cost lines + chosen-prompt dots
+  // Cumulative cost curves (bend upward as context grows) + chosen-prompt dots
   rows.forEach((r, i) => {
     const color = COLORS[i % COLORS.length];
-    const x1 = xScale(0), y1 = yScale(0);
-    const x2 = xScale(xMax), y2 = yScale(r.cpp * xMax);
-    svg += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + color + '" stroke-width="2" opacity="0.85" />';
+    const steps = 60;
+    let pts = "";
+    for (let s = 0; s <= steps; s++) {
+      const xv = (xMax / steps) * s;
+      pts += xScale(xv).toFixed(1) + "," + yScale(cumulativeCost(r.model, p, xv)).toFixed(1) + " ";
+    }
+    svg += '<polyline points="' + pts.trim() + '" fill="none" stroke="' + color + '" stroke-width="2" opacity="0.85" />';
     const mx = xScale(r.prompts), my = yScale(r.total);
     svg += '<circle cx="' + mx + '" cy="' + my + '" r="5" fill="' + color + '" stroke="#0d1117" stroke-width="1.5" />';
     const sw = document.createElement("span");
@@ -214,7 +260,7 @@ function renderChart() {
     legend.appendChild(sw);
   });
 
-  // Break-even markers: where each cheaper model's cost line reaches the most
+  // Break-even markers: where each cheaper model's cost curve reaches the most
   // expensive model's total. Reference level + one marker per cheaper model.
   if (breakevens.length) {
     const refY = yScale(expCpp.total);
@@ -269,7 +315,7 @@ function renderDerivation() {
   function promptDerivation(r) {
     const m = r.model;
     return '<div class="dwork"><span class="dlabel">' + m.name + '</span>' +
-      'cost<sub>prompt</sub> = ( ' +
+      'base = ( ' +
       grp(p.input) + '·' + m.input.toFixed(2) + ' + ' +
       grp(p.cached) + '·' + m.cached.toFixed(2) + ' + ' +
       grp(p.cacheWrite) + '·' + m.cacheWrite.toFixed(2) + ' + ' +
@@ -277,21 +323,26 @@ function renderDerivation() {
       ' = <strong>' + fmt(r.cpp) + '</strong></div>';
   }
 
-  // Section 1: cost per prompt for every selected model.
+  // Section 1: base (first-prompt) cost for every selected model.
   promptBox.innerHTML =
     '<div class="dhead">With the current token profile (t<sub>in</sub>=' + grp(p.input) +
     ', t<sub>cache</sub>=' + grp(p.cached) + ', t<sub>write</sub>=' + grp(p.cacheWrite) +
-    ', t<sub>out</sub>=' + grp(p.output) + '):</div>' +
+    ', t<sub>out</sub>=' + grp(p.output) + '), the first prompt costs:</div>' +
     rows.map(promptDerivation).join("");
 
-  // Section 2: total cost = n · cost_prompt for every selected model.
+  // Section 2: context-growth step + cumulative total for every model.
   totalBox.innerHTML =
-    '<div class="dhead">Multiplying by each model\'s chosen prompt count:</div>' +
-    rows.map((r) =>
-      '<div class="dwork"><span class="dlabel">' + r.model.name + '</span>' +
-      'cost<sub>total</sub> = ' + r.prompts + ' · ' + fmt(r.cpp) +
-      ' = <strong>' + fmt(r.total) + '</strong></div>'
-    ).join("");
+    '<div class="dhead">Each prompt adds g=' + grp(p.growth) +
+    ' cached tokens of history, so the per-step surcharge is δ = ' + grp(p.growth) +
+    '·p<sub>cache</sub>/1,000,000, and the total is n·base + δ·n(n−1)/2:</div>' +
+    rows.map((r) => {
+      const delta = growthStepCost(r.model, p);
+      const n = r.prompts;
+      return '<div class="dwork"><span class="dlabel">' + r.model.name + '</span>' +
+        'δ = ' + grp(p.growth) + '·' + r.model.cached.toFixed(2) + '/1M = ' + fmt(delta) + '; ' +
+        'total = ' + n + '·' + fmt(r.cpp) + ' + ' + fmt(delta) + '·' + n + '·' + (n - 1) + '/2' +
+        ' = <strong>' + fmt(r.total) + '</strong></div>';
+    }).join("");
 
   // Section 3: break-even of cheaper models against the most expensive one.
   if (rows.length < 2 || E.model.id === C.model.id || E.cpp <= 0) {
@@ -302,12 +353,16 @@ function renderDerivation() {
     .sort((a, b) => a.cpp - b.cpp);
   let beHtml =
     '<div class="dhead">Reference E = <strong>' + E.model.name + '</strong> at ' +
-    fmt(E.total) + ' (' + E.prompts + ' prompt' + (E.prompts > 1 ? 's' : '') + '):</div>';
+    fmt(E.total) + ' (' + E.prompts + ' prompt' + (E.prompts > 1 ? 's' : '') +
+    '). Solving (δ/2)n² + (base−δ/2)n − ' + fmt(E.total) + ' = 0:</div>';
   beHtml += cheaper.map((r) => {
-    const be = E.total / r.cpp;
+    const be = breakEvenPrompts(r.model, p, E.total);
+    const delta = growthStepCost(r.model, p);
+    const detail = delta > 0
+      ? 'base=' + fmt(r.cpp) + ', δ=' + fmt(delta) + ' → n'
+      : 'n = ' + fmt(E.total) + ' / ' + fmt(r.cpp);
     return '<div class="dwork"><span class="dlabel">' + r.model.name + '</span>' +
-      'n<sub>break-even</sub> = ' + fmt(E.total) + ' / ' + fmt(r.cpp) +
-      ' = <strong>' + be.toFixed(1) + '</strong> prompts' +
+      detail + ' = <strong>' + be.toFixed(1) + '</strong> prompts' +
       ' <span class="muted">→ past ' + Math.floor(be) + ', ' + E.model.name + ' wins</span></div>';
   }).join("");
   beBox.innerHTML = beHtml;

@@ -50,7 +50,7 @@
         <thead>
           <tr>
             <th>Model</th>
-            <th>Cost / prompt</th>
+            <th>Avg / prompt</th>
             <th>Prompts</th>
             <th>Total cost</th>
             <th></th>
@@ -80,37 +80,44 @@
           <label>Output tokens <span class="muted">(code + explanation)</span></label>
           <input type="number" id="tokOut" value="3500" min="0" step="500" />
         </div>
+        <div>
+          <label>Context growth / prompt <span class="muted">(history added each turn)</span></label>
+          <input type="number" id="tokGrowth" value="12000" min="0" step="500" />
+        </div>
       </div>
-      <p class="note">Defaults reflect a typical agent turn: a short new instruction (~9K), a large slice of cached context — system prompt, tool definitions, conversation history and re-read source files (~34K) — fresh content written to the cache (~11K), and a few thousand output tokens of generated code and prose.</p>
+      <p class="note">Defaults reflect a typical agent turn: a short new instruction (~9K), a large slice of cached context — system prompt, tool definitions, conversation history and re-read source files (~34K) — fresh content written to the cache (~11K), and a few thousand output tokens of generated code and prose. <strong>Context growth</strong> is the key one: every turn the prior output, tool results and new file reads (~12K) pile onto the context, so each prompt re-reads more than the last.</p>
     </section>
 
     <!-- The maths -->
     <section class="panel maths-panel">
       <h2>The maths <span class="hint">How every number on this page is computed.</span></h2>
 
-      <h3>1 · Cost of a single prompt</h3>
-      <p>Each model has four per-token prices (quoted per&nbsp;1M tokens): input <code>p<sub>in</sub></code>, cached input <code>p<sub>cache</sub></code>, cache&nbsp;write <code>p<sub>write</sub></code> and output <code>p<sub>out</sub></code>. With the shared token profile — <code>t<sub>in</sub></code>, <code>t<sub>cache</sub></code>, <code>t<sub>write</sub></code>, <code>t<sub>out</sub></code> tokens — the cost of one prompt is:</p>
+      <h3>1 · Cost of the first prompt</h3>
+      <p>Each model has four per-token prices (quoted per&nbsp;1M tokens): input <code>p<sub>in</sub></code>, cached input <code>p<sub>cache</sub></code>, cache&nbsp;write <code>p<sub>write</sub></code> and output <code>p<sub>out</sub></code>. With the shared token profile — <code>t<sub>in</sub></code>, <code>t<sub>cache</sub></code>, <code>t<sub>write</sub></code>, <code>t<sub>out</sub></code> tokens — the first prompt (before any history piles up) costs:</p>
       <div class="formula">
-        cost<sub>prompt</sub> =
-        ( t<sub>in</sub>·p<sub>in</sub> + t<sub>cache</sub>·p<sub>cache</sub> + t<sub>write</sub>·p<sub>write</sub> + t<sub>out</sub>·p<sub>out</sub> ) / 1,000,000
+        base = ( t<sub>in</sub>·p<sub>in</sub> + t<sub>cache</sub>·p<sub>cache</sub> + t<sub>write</sub>·p<sub>write</sub> + t<sub>out</sub>·p<sub>out</sub> ) / 1,000,000
       </div>
       <p>The division by 1,000,000 converts the per-1M prices into a per-token rate.</p>
       <div class="derivation" id="derivPrompt"></div>
 
-      <h3>2 · Total cost of a task</h3>
-      <p>If a model needs <code>n</code> prompts to finish the task, its total cost is simply the per-prompt cost repeated:</p>
+      <h3>2 · Context explosion &amp; total cost</h3>
+      <p>An agent doesn't start fresh each turn — the whole conversation is resent. Every prompt adds about <code>g</code> tokens of history (the previous output, tool results, freshly read files), which the next prompt re-reads as cached input. So the <code>k</code>-th prompt costs the base plus the surcharge for the <code>k−1</code> turns of accumulated context:</p>
       <div class="formula">
-        cost<sub>total</sub> = n · cost<sub>prompt</sub>
+        cost(k) = base + (k−1)·δ &nbsp;&nbsp;where&nbsp;&nbsp; δ = g·p<sub>cache</sub> / 1,000,000
       </div>
-      <p>This is the value the ranking sorts on — <strong>the cheapest total wins</strong>, even if its per-prompt price is higher, because it may need fewer prompts.</p>
+      <p>Summing that arithmetic series over <code>n</code> prompts gives a <strong>quadratic</strong> total — the &ldquo;explosion&rdquo;. Each extra prompt is pricier than the one before, so costs bend upward rather than growing in a straight line:</p>
+      <div class="formula">
+        cost<sub>total</sub> = n·base + δ · n(n−1)/2
+      </div>
+      <p>This is the value the ranking sorts on — <strong>the cheapest total wins</strong>. A model with a higher base price can still win if it finishes in fewer prompts, because it dodges most of the context explosion.</p>
       <div class="derivation" id="derivTotal"></div>
 
       <h3>3 · Break-even point</h3>
-      <p>Take the model with the highest per-prompt cost as the reference (call it <code>E</code>) and its chosen total <code>cost<sub>total</sub><sup>E</sup></code>. A cheaper-per-prompt model <code>C</code> reaches that same spend after:</p>
+      <p>Take the model with the highest base cost as the reference (<code>E</code>) and its chosen total <code>cost<sub>total</sub><sup>E</sup></code>. Because a cheaper model <code>C</code>'s cost is now quadratic, break-even is the positive root of:</p>
       <div class="formula">
-        n<sub>break-even</sub> = cost<sub>total</sub><sup>E</sup> / cost<sub>prompt</sub><sup>C</sup>
+        (δ<sub>C</sub>/2)·n² + (base<sub>C</sub> − δ<sub>C</sub>/2)·n − cost<sub>total</sub><sup>E</sup> = 0
       </div>
-      <p>Read it as: if the cheaper model <code>C</code> needs <strong>more</strong> than <code>n<sub>break-even</sub></code> prompts to do what <code>E</code> does in its chosen number of prompts, the pricier model <code>E</code> is the better deal. On the chart this is where each cheaper model's cost line crosses the dashed reference line of the most expensive model.</p>
+      <p>Read it as: if the cheaper model <code>C</code> needs <strong>more</strong> than <code>n</code> prompts to do what <code>E</code> does in its chosen number of prompts, the pricier model <code>E</code> is the better deal. On the chart this is where each cheaper model's upward-bending cost curve crosses the dashed reference line of the most expensive model. (With no context growth, <code>δ=0</code> and it collapses back to the simple <code>cost<sub>total</sub><sup>E</sup> / base<sub>C</sub></code>.)</p>
       <div class="derivation" id="derivBreakeven"></div>
     </section>
   </main>
