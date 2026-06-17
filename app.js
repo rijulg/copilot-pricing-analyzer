@@ -1,6 +1,13 @@
 // State: selected models -> { modelId, prompts }
 const selected = [];
 
+// Which chart(s) to show: "both" | "cost" | "breakeven".
+let chartView = "both";
+
+// Per-chart x-axis zoom factor (>1 zooms in / shrinks the visible range,
+// <1 zooms out / shows more). Adjusted by the per-chart zoom buttons.
+const zoom = { cost: 1, breakeven: 1 };
+
 const $ = (id) => document.getElementById(id);
 
 function getProfile() {
@@ -127,7 +134,7 @@ function renderModelList() {
     if (range) range.value = Math.min(20, s.prompts);
     if (num && +num.value !== s.prompts) num.value = s.prompts;
     renderResults();
-    renderChart();
+    renderCharts();
     renderDerivation();
     updateURL();
   }
@@ -220,7 +227,8 @@ function renderChart() {
 
   // Focus the x-axis on the data region (chosen prompts + break-even), not a fixed width
   const maxPrompt = Math.max(...rows.map((r) => r.prompts));
-  const xMax = Math.max(4, Math.ceil(Math.max(maxPrompt + 1, maxBeX * 1.3)));
+  const baseXMax = Math.max(4, Math.ceil(Math.max(maxPrompt + 1, maxBeX * 1.3)));
+  const xMax = Math.max(2, Math.round(baseXMax / zoom.cost));
   const yMax = (Math.max(...rows.map((r) => cumulativeCost(r.model, p, xMax))) * 1.05) || 1;
 
   const xScale = (x) => pad.l + (x / xMax) * (W - pad.l - pad.r);
@@ -280,10 +288,138 @@ function renderChart() {
   chart.innerHTML = svg;
 }
 
+// Second chart: how the break-even point scales. For the most expensive model
+// (reference E) running k prompts, each cheaper model C can run breakEven(C, E@k)
+// prompts for the same spend. Plot that break-even count (y) against the
+// reference's prompt count (x), so you can see how much head-room each cheaper
+// model gains as the pricier one is used for longer tasks.
+function renderChart2() {
+  const rows = computeRows();
+  const chart = $("chart2");
+  const legend = $("legend2");
+  legend.innerHTML = "";
+  if (!rows.length) { chart.innerHTML = '<p class="muted">Add models to see the chart.</p>'; return; }
+
+  const p = getProfile();
+  const exp = rows.slice().sort((a, b) => b.cpp - a.cpp)[0];
+  const cheaper = rows.filter((r) => r.model.id !== exp.model.id && r.cpp > 0 && r.cpp < exp.cpp);
+  if (!cheaper.length) {
+    chart.innerHTML = '<p class="muted">Add a cheaper-per-prompt model to see break-even scaling against ' + exp.model.name + '.</p>';
+    return;
+  }
+
+  const W = 720, H = 240, pad = { l: 56, r: 24, t: 16, b: 38 };
+
+  // x-axis = reference model's prompt count. Default to a wide range so the
+  // break-even scaling is visible far out; zoom narrows or widens it on demand.
+  const dataMax = Math.max(exp.prompts + 2, Math.max(...rows.map((r) => r.prompts)) + 1);
+  const baseXMax = Math.max(50, Math.ceil(dataMax));
+  const xMax = Math.max(4, Math.round(baseXMax / zoom.breakeven));
+
+  // breakEven for cheaper model C when reference E has run k prompts.
+  const beAt = (model, k) => breakEvenPrompts(model, p, cumulativeCost(exp.model, p, k));
+
+  let yMax = xMax; // the y=x reference line reaches xMax
+  cheaper.forEach((r) => {
+    const be = beAt(r.model, xMax);
+    if (isFinite(be)) yMax = Math.max(yMax, be);
+  });
+  yMax = (yMax * 1.08) || 1;
+
+  const xScale = (x) => pad.l + (x / xMax) * (W - pad.l - pad.r);
+  const yScale = (y) => H - pad.b - (y / yMax) * (H - pad.t - pad.b);
+
+  let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Break-even scaling chart">';
+  const yTicks = 5;
+  for (let i = 0; i <= yTicks; i++) {
+    const yv = (yMax / yTicks) * i;
+    const y = yScale(yv);
+    svg += '<line x1="' + pad.l + '" y1="' + y + '" x2="' + (W - pad.r) + '" y2="' + y + '" stroke="#21262d" />';
+    svg += '<text x="' + (pad.l - 6) + '" y="' + (y + 3) + '" fill="#8b949e" font-size="8" text-anchor="end">' + yv.toFixed(yv < 10 ? 1 : 0) + '</text>';
+  }
+  const xTicks = Math.min(xMax, 10);
+  for (let i = 0; i <= xTicks; i++) {
+    const xv = Math.round((xMax / xTicks) * i);
+    const x = xScale(xv);
+    svg += '<line x1="' + x + '" y1="' + pad.t + '" x2="' + x + '" y2="' + (H - pad.b) + '" stroke="#161b22" />';
+    svg += '<text x="' + x + '" y="' + (H - pad.b + 14) + '" fill="#8b949e" font-size="8" text-anchor="middle">' + xv + '</text>';
+  }
+  svg += '<text x="' + ((pad.l + W - pad.r) / 2) + '" y="' + (H - 6) + '" fill="#8b949e" font-size="9" text-anchor="middle">' + exp.model.name + ' prompts (reference)</text>';
+  svg += '<text transform="translate(14,' + ((pad.t + H - pad.b) / 2) + ') rotate(-90)" fill="#8b949e" font-size="9" text-anchor="middle">Break-even prompts</text>';
+
+  // Reference: a cheaper model breaks even where its cost matches E. E itself sits
+  // on the y=x identity line (it always "breaks even" with itself at k prompts).
+  const expColor = COLORS[rows.indexOf(exp) % COLORS.length];
+  svg += '<line x1="' + xScale(0) + '" y1="' + yScale(0) + '" x2="' + xScale(xMax) + '" y2="' + yScale(xMax) + '" stroke="' + expColor + '" stroke-width="1.5" stroke-dasharray="2 4" opacity="0.6" />';
+  const expSw = document.createElement("span");
+  expSw.innerHTML = '<span class="swatch" style="background:' + expColor + '"></span>' + exp.model.name + ' (reference)';
+  legend.appendChild(expSw);
+
+  // One curve per cheaper model: break-even prompts vs reference prompts.
+  cheaper.forEach((r) => {
+    const color = COLORS[rows.indexOf(r) % COLORS.length];
+    const steps = 60;
+    let pts = "";
+    for (let s = 0; s <= steps; s++) {
+      const xv = (xMax / steps) * s;
+      const be = beAt(r.model, xv);
+      if (!isFinite(be)) continue;
+      pts += xScale(xv).toFixed(1) + "," + yScale(Math.min(be, yMax)).toFixed(1) + " ";
+    }
+    svg += '<polyline points="' + pts.trim() + '" fill="none" stroke="' + color + '" stroke-width="2" opacity="0.85" />';
+    const sw = document.createElement("span");
+    sw.innerHTML = '<span class="swatch" style="background:' + color + '"></span>' + r.model.name;
+    legend.appendChild(sw);
+  });
+
+  // Marker at the reference's chosen prompt count: the break-even values currently
+  // shown on the first chart, read off here as the head-room each model has.
+  const markX = xScale(exp.prompts);
+  svg += '<line x1="' + markX + '" y1="' + (H - pad.b) + '" x2="' + markX + '" y2="' + pad.t + '" stroke="#8b949e" stroke-width="1" stroke-dasharray="4 4" opacity="0.5" />';
+  cheaper.forEach((r) => {
+    const be = beAt(r.model, exp.prompts);
+    if (!isFinite(be) || be > yMax) return;
+    const color = COLORS[rows.indexOf(r) % COLORS.length];
+    const my = yScale(be);
+    svg += '<circle cx="' + markX + '" cy="' + my + '" r="4" fill="' + color + '" stroke="#0d1117" stroke-width="1.5" />';
+    svg += '<text x="' + (markX + 5) + '" y="' + (my - 4) + '" fill="' + color + '" font-size="9" font-weight="600">' + be.toFixed(1) + '</text>';
+  });
+
+  svg += '</svg>';
+  chart.innerHTML = svg;
+}
+
+// Show/hide each graph block per the selected view and (re)render the visible ones.
+function renderCharts() {
+  const showCost = chartView === "both" || chartView === "cost";
+  const showBe = chartView === "both" || chartView === "breakeven";
+  $("chartBlock1").style.display = showCost ? "block" : "none";
+  $("chartBlock2").style.display = showBe ? "block" : "none";
+  document.querySelector(".chart-grid").classList.toggle("single", chartView !== "both");
+  if (showCost) renderChart();
+  if (showBe) renderChart2();
+}
+
+function setChartView(view) {
+  chartView = view;
+  $("chartToggle").querySelectorAll("button").forEach((b) =>
+    b.classList.toggle("active", b.dataset.view === view)
+  );
+  renderCharts();
+}
+
+// Zoom the x-axis of one chart in/out (or reset). Higher factor = narrower range.
+function setZoom(chart, action) {
+  if (action === "reset") zoom[chart] = 1;
+  else if (action === "in") zoom[chart] = Math.min(8, zoom[chart] * 1.5);
+  else if (action === "out") zoom[chart] = Math.max(0.125, zoom[chart] / 1.5);
+  renderCharts();
+}
+
 function render() {
   renderModelList();
   renderResults();
-  renderChart();
+  renderCharts();
   renderDerivation();
   updateURL();
 }
@@ -400,7 +536,17 @@ function init() {
     addModel("opus-4.8", 1);
   });
   ["tokIn", "tokCached", "tokCacheWrite", "tokOut"].forEach((id) =>
-    $(id).addEventListener("input", () => { renderModelList(); renderResults(); renderChart(); renderDerivation(); })
+    $(id).addEventListener("input", () => { renderModelList(); renderResults(); renderCharts(); renderDerivation(); })
+  );
+
+  $("chartToggle").querySelectorAll("button").forEach((b) =>
+    b.addEventListener("click", () => setChartView(b.dataset.view))
+  );
+
+  document.querySelectorAll(".zoom").forEach((z) =>
+    z.querySelectorAll("button").forEach((b) =>
+      b.addEventListener("click", () => setZoom(z.dataset.chart, b.dataset.zoom))
+    )
   );
 
   populatePicker();

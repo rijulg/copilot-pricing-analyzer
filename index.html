@@ -22,8 +22,39 @@
   <main class="wrap">
     <!-- PROMINENT: chart -->
     <section class="panel chart-panel">
-      <div id="chart"></div>
-      <div class="legend" id="legend"></div>
+      <div class="chart-toolbar">
+        <div class="seg" id="chartToggle" role="tablist" aria-label="Chart view">
+          <button type="button" data-view="both" class="active">Both</button>
+          <button type="button" data-view="cost">Cost curves</button>
+          <button type="button" data-view="breakeven">Break-even scaling</button>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-block" id="chartBlock1">
+          <div class="chart-head">
+            <div class="chart-title">Total cost vs prompts <span class="hint">Where each cheaper model's curve crosses the most expensive model's total is its break-even.</span></div>
+            <div class="zoom seg" data-chart="cost">
+              <button type="button" data-zoom="out" title="Zoom out (show more)" aria-label="Zoom out">−</button>
+              <button type="button" data-zoom="reset" title="Reset zoom" aria-label="Reset zoom">⟳</button>
+              <button type="button" data-zoom="in" title="Zoom in" aria-label="Zoom in">+</button>
+            </div>
+          </div>
+          <div id="chart"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="chart-block" id="chartBlock2">
+          <div class="chart-head">
+            <div class="chart-title">Break-even scaling <span class="hint">How many prompts each cheaper model can run for the same spend as the most expensive model, as that model runs more prompts.</span></div>
+            <div class="zoom seg" data-chart="breakeven">
+              <button type="button" data-zoom="out" title="Zoom out (show more)" aria-label="Zoom out">−</button>
+              <button type="button" data-zoom="reset" title="Reset zoom" aria-label="Reset zoom">⟳</button>
+              <button type="button" data-zoom="in" title="Zoom in" aria-label="Zoom in">+</button>
+            </div>
+          </div>
+          <div id="chart2"></div>
+          <div class="legend" id="legend2"></div>
+        </div>
+      </div>
     </section>
 
     <!-- Models + add -->

@@ -63,3 +63,13 @@ Run with Claude Opus 4.8 with Autopilot approvals
 Run with Claude Opus 4.8 with Autopilot approvals
 
 > Let's update the model update script and github action to use python that is already installed in linux boxes instead of node. That should simplify the implementation of the github action, and we can run the script locally with python3 here to verify everything is working expected.
+
+## Tenth run
+
+Run with Claude Opus 4.8 with Autopilot approvals
+
+> Let's show two graphs instead of just one with the option of showing both or either by some selector and by default show both. The first graph already exists and is fine. The second graph should plot the breakeven per number of prompt for the different models compared to the most expensive model, so basically the same info as the first graph but presented differently and showing the breakeven point scales.
+
+> Let's display these side by side horizontally, rather than vertically.
+
+> Let's make the X axis for the berak-even scaling graph much larger, so that we can see how it scales out by default. And maybe add some kind of zooming mechanism so that we can scale the graphs on demand.
