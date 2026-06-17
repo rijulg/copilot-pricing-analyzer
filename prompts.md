@@ -57,3 +57,9 @@ Run with Claude Opus 4.8 with Autopilot approvals
 Run with Claude Opus 4.8 with Autopilot approvals
 
 > Add a github action to daily update the models.js file.
+
+## Ninth run
+
+Run with Claude Opus 4.8 with Autopilot approvals
+
+> Let's update the model update script and github action to use python that is already installed in linux boxes instead of node. That should simplify the implementation of the github action, and we can run the script locally with python3 here to verify everything is working expected.

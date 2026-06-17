@@ -2,8 +2,7 @@ name: Update models pricing
 
 on:
   schedule:
-    # Daily at 06:17 UTC.
-    - cron: "17 6 * * *"
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,12 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Regenerate models.js
-        run: node scripts/update-models.js
+        run: python3 scripts/update-models.py
 
       - name: Commit changes
         run: |
