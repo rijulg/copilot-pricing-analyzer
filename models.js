@@ -12,6 +12,7 @@ const MODELS = [
   { id: "opus-4.6", name: "Claude Opus 4.6", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-4.7", name: "Claude Opus 4.7", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-4.8", name: "Claude Opus 4.8", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
+  { id: "sonnet-5[^sonnet-5-promo]", name: "Claude Sonnet 5[^sonnet-5-promo]", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
   { id: "opus-4.8-(fast-mode)-(preview)", name: "Claude Opus 4.8 (fast mode) (preview)", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5", name: "Claude Fable 5", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   // OpenAI
