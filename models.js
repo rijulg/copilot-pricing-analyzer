@@ -24,6 +24,12 @@ const MODELS = [
   { id: "gpt-5.4-nano", name: "GPT-5.4 nano", provider: "OpenAI", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.25 },
   { id: "gpt-5.5", name: "GPT-5.5 (≤272K)", provider: "OpenAI", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 0, output: 30.00 },
   { id: "gpt-5.5-long", name: "GPT-5.5 (>272K)", provider: "OpenAI", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 0, output: 45.00 },
+  { id: "gpt-5.6-luna", name: "GPT-5.6 Luna (≤200K)", provider: "OpenAI", tier: "Lightweight", input: 1.00, cached: 0.10, cacheWrite: 0, output: 6.00 },
+  { id: "gpt-5.6-luna-long", name: "GPT-5.6 Luna (>200K)", provider: "OpenAI", tier: "Lightweight", input: 2.00, cached: 0.20, cacheWrite: 0, output: 9.00 },
+  { id: "gpt-5.6-sol", name: "GPT-5.6 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 0, output: 30.00 },
+  { id: "gpt-5.6-sol-long", name: "GPT-5.6 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 0, output: 45.00 },
+  { id: "gpt-5.6-terra", name: "GPT-5.6 Terra (≤272K)", provider: "OpenAI", tier: "Versatile", input: 2.50, cached: 0.25, cacheWrite: 0, output: 15.00 },
+  { id: "gpt-5.6-terra-long", name: "GPT-5.6 Terra (>272K)", provider: "OpenAI", tier: "Versatile", input: 5.00, cached: 0.50, cacheWrite: 0, output: 22.50 },
   // Google
   { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro", provider: "Google", tier: "Powerful", input: 1.25, cached: 0.125, cacheWrite: 0, output: 10.00 },
   { id: "gemini-3-flash", name: "Gemini 3 Flash", provider: "Google", tier: "Lightweight", input: 0.50, cached: 0.05, cacheWrite: 0, output: 3.00 },
