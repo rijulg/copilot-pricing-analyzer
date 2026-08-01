@@ -32,8 +32,6 @@ const MODELS = [
   { id: "gpt-5.6-terra", name: "GPT-5.6 Terra (≤272K)", provider: "OpenAI", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 0, output: 12.00 },
   { id: "gpt-5.6-terra-long", name: "GPT-5.6 Terra (>272K)", provider: "OpenAI", tier: "Versatile", input: 4.00, cached: 0.40, cacheWrite: 0, output: 18.00 },
   // Google
-  { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro", provider: "Google", tier: "Powerful", input: 1.25, cached: 0.125, cacheWrite: 0, output: 10.00 },
-  { id: "gemini-3-flash", name: "Gemini 3 Flash", provider: "Google", tier: "Lightweight", input: 0.50, cached: 0.05, cacheWrite: 0, output: 3.00 },
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (≤200K)", provider: "Google", tier: "Powerful", input: 2.00, cached: 0.20, cacheWrite: 0, output: 12.00 },
   { id: "gemini-3.1-pro-long", name: "Gemini 3.1 Pro (>200K)", provider: "Google", tier: "Powerful", input: 4.00, cached: 0.40, cacheWrite: 0, output: 18.00 },
   { id: "gemini-3.5-flash", name: "Gemini 3.5 Flash", provider: "Google", tier: "Lightweight", input: 1.50, cached: 0.15, cacheWrite: 0, output: 9.00 },
