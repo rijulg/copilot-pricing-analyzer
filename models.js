@@ -40,6 +40,7 @@ const MODELS = [
   { id: "raptor-mini", name: "Raptor mini", provider: "GitHub", tier: "Versatile", input: 0.25, cached: 0.025, cacheWrite: 0, output: 2.00 },
   // Microsoft
   { id: "mai-code-1-flash", name: "MAI-Code-1-Flash", provider: "Microsoft", tier: "Lightweight", input: 0.75, cached: 0.075, cacheWrite: 0, output: 4.50 },
+  { id: "mai-code-1.1-flash", name: "MAI-Code-1.1-Flash", provider: "Microsoft", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.20 },
   // xAI
   { id: "grok-4.5", name: "Grok 4.5 (≤200K)", provider: "xAI", tier: "Versatile", input: 2.00, cached: 0.50, cacheWrite: 0, output: 6.00 },
   { id: "grok-4.5-long", name: "Grok 4.5 (>200K)", provider: "xAI", tier: "Versatile", input: 4.00, cached: 1.00, cacheWrite: 0, output: 12.00 },
