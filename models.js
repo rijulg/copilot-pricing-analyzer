@@ -13,7 +13,7 @@ const MODELS = [
   { id: "opus-4.7", name: "Claude Opus 4.7", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-4.8", name: "Claude Opus 4.8", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-5", name: "Claude Opus 5", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
-  { id: "sonnet-5[^sonnet-5-promo]", name: "Claude Sonnet 5[^sonnet-5-promo]", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
+  { id: "sonnet-5", name: "Claude Sonnet 5", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
   { id: "opus-4.8-(fast-mode)-(preview)", name: "Claude Opus 4.8 (fast mode) (preview)", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5", name: "Claude Fable 5", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   // OpenAI
@@ -35,7 +35,8 @@ const MODELS = [
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (≤200K)", provider: "Google", tier: "Powerful", input: 2.00, cached: 0.20, cacheWrite: 0, output: 12.00 },
   { id: "gemini-3.1-pro-long", name: "Gemini 3.1 Pro (>200K)", provider: "Google", tier: "Powerful", input: 4.00, cached: 0.40, cacheWrite: 0, output: 18.00 },
   { id: "gemini-3.5-flash", name: "Gemini 3.5 Flash", provider: "Google", tier: "Lightweight", input: 1.50, cached: 0.15, cacheWrite: 0, output: 9.00 },
-  { id: "gemini-3.6-flash", name: "Gemini 3.6 Flash", provider: "Google", tier: "Versatile", input: 1.50, cached: 0.15, cacheWrite: 0, output: 7.50 },
+  { id: "gemini-3.6-flash[^gemini-flash-promo]", name: "Gemini 3.6 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
+  { id: "gemini-3.7-flash[^gemini-flash-promo]", name: "Gemini 3.7 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   // Fine-tuned (GitHub)
   { id: "raptor-mini", name: "Raptor mini", provider: "GitHub", tier: "Versatile", input: 0.25, cached: 0.025, cacheWrite: 0, output: 2.00 },
   // Microsoft
