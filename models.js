@@ -45,6 +45,8 @@ const MODELS = [
   // xAI
   { id: "grok-4.5", name: "Grok 4.5 (≤200K)", provider: "xAI", tier: "Versatile", input: 2.00, cached: 0.50, cacheWrite: 0, output: 6.00 },
   { id: "grok-4.5-long", name: "Grok 4.5 (>200K)", provider: "xAI", tier: "Versatile", input: 4.00, cached: 1.00, cacheWrite: 0, output: 12.00 },
+  { id: "grok-4.6", name: "Grok 4.6 (≤200K)", provider: "xAI", tier: "Versatile", input: 2.00, cached: 0.50, cacheWrite: 0, output: 6.00 },
+  { id: "grok-4.6-long", name: "Grok 4.6 (>200K)", provider: "xAI", tier: "Versatile", input: 4.00, cached: 1.00, cacheWrite: 0, output: 12.00 },
 ];
 
 const COLORS = ["#2f81f7", "#3fb950", "#d29922", "#f85149", "#a371f7", "#39c5cf", "#db61a2", "#e3b341"];
