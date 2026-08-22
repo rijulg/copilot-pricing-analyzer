@@ -27,8 +27,8 @@ const MODELS = [
   { id: "gpt-5.5-long", name: "GPT-5.5 (>272K)", provider: "OpenAI", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 0, output: 45.00 },
   { id: "gpt-5.6-luna", name: "GPT-5.6 Luna (≤200K)", provider: "OpenAI", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.20 },
   { id: "gpt-5.6-luna-long", name: "GPT-5.6 Luna (>200K)", provider: "OpenAI", tier: "Lightweight", input: 0.40, cached: 0.04, cacheWrite: 0, output: 1.80 },
-  { id: "gpt-5.6-sol", name: "GPT-5.6 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 0, output: 30.00 },
-  { id: "gpt-5.6-sol-long", name: "GPT-5.6 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 0, output: 45.00 },
+  { id: "gpt-5.6-sol[^gpt-56-sol-promo]", name: "GPT-5.6 Sol[^gpt-56-sol-promo] (≤272K)", provider: "OpenAI", tier: "Powerful", input: 2.00, cached: 0.20, cacheWrite: 0, output: 10.00 },
+  { id: "gpt-5.6-sol[^gpt-56-sol-promo]-long", name: "GPT-5.6 Sol[^gpt-56-sol-promo] (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.40, cacheWrite: 0, output: 15.00 },
   { id: "gpt-5.6-terra", name: "GPT-5.6 Terra (≤272K)", provider: "OpenAI", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 0, output: 12.00 },
   { id: "gpt-5.6-terra-long", name: "GPT-5.6 Terra (>272K)", provider: "OpenAI", tier: "Versatile", input: 4.00, cached: 0.40, cacheWrite: 0, output: 18.00 },
   // Google
