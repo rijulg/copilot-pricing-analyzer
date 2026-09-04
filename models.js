@@ -38,6 +38,7 @@ const MODELS = [
   { id: "gemini-3.5-flash", name: "Gemini 3.5 Flash", provider: "Google", tier: "Lightweight", input: 1.50, cached: 0.15, cacheWrite: 0, output: 9.00 },
   { id: "gemini-3.6-flash[^gemini-flash-promo]", name: "Gemini 3.6 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   { id: "gemini-3.7-flash[^gemini-flash-promo]", name: "Gemini 3.7 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
+  { id: "gemini-3.8-flash[^gemini-flash-promo]", name: "Gemini 3.8 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   // Fine-tuned (GitHub)
   { id: "raptor-mini", name: "Raptor mini", provider: "GitHub", tier: "Versatile", input: 0.25, cached: 0.025, cacheWrite: 0, output: 2.00 },
   // Microsoft
