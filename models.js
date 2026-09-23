@@ -10,6 +10,7 @@ const MODELS = [
   { id: "opus-4.7", name: "Claude Opus 4.7", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-4.8", name: "Claude Opus 4.8", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-5", name: "Claude Opus 5", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
+  { id: "opus-5.5", name: "Claude Opus 5.5", provider: "Anthropic", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 5.00, output: 20.00 },
   { id: "sonnet-5", name: "Claude Sonnet 5", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
   { id: "opus-4.8-(fast-mode)-(preview)", name: "Claude Opus 4.8 (fast mode) (preview)", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5", name: "Claude Fable 5", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
@@ -31,6 +32,10 @@ const MODELS = [
   { id: "gpt-5.6-terra-long", name: "GPT-5.6 Terra (>272K)", provider: "OpenAI", tier: "Versatile", input: 4.00, cached: 0.40, cacheWrite: 0, output: 18.00 },
   { id: "gpt-6-astra", name: "GPT-6 Astra (≤272K)", provider: "OpenAI", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 0, output: 50.00 },
   { id: "gpt-6-astra-long", name: "GPT-6 Astra (>272K)", provider: "OpenAI", tier: "Powerful", input: 20.00, cached: 2.00, cacheWrite: 0, output: 75.00 },
+  { id: "gpt-6-luna", name: "GPT-6 Luna (≤272K)", provider: "OpenAI", tier: "Lightweight", input: 0.10, cached: 0.01, cacheWrite: 0, output: 0.50 },
+  { id: "gpt-6-luna-long", name: "GPT-6 Luna (>272K)", provider: "OpenAI", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 0.75 },
+  { id: "gpt-6-sol", name: "GPT-6 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 2.00, cached: 0.20, cacheWrite: 0, output: 10.00 },
+  { id: "gpt-6-sol-long", name: "GPT-6 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.40, cacheWrite: 0, output: 15.00 },
   // Google
   { id: "gemini-3.5-flash", name: "Gemini 3.5 Flash", provider: "Google", tier: "Lightweight", input: 1.50, cached: 0.15, cacheWrite: 0, output: 9.00 },
   { id: "gemini-3.6-flash[^gemini-flash-promo]", name: "Gemini 3.6 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
