@@ -12,6 +12,7 @@ const MODELS = [
   { id: "opus-5", name: "Claude Opus 5", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-5.5", name: "Claude Opus 5.5", provider: "Anthropic", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 5.00, output: 20.00 },
   { id: "sonnet-5", name: "Claude Sonnet 5", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
+  { id: "sonnet-5.5", name: "Claude Sonnet 5.5", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
   { id: "opus-4.8-(fast-mode)-(preview)", name: "Claude Opus 4.8 (fast mode) (preview)", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5", name: "Claude Fable 5", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5.1", name: "Claude Fable 5.1", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 0.25, cacheWrite: 12.50, output: 50.00 },
