@@ -37,6 +37,8 @@ const MODELS = [
   { id: "gpt-6-luna-long", name: "GPT-6 Luna (>272K)", provider: "OpenAI", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 0.75 },
   { id: "gpt-6-sol", name: "GPT-6 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 2.00, cached: 0.20, cacheWrite: 0, output: 10.00 },
   { id: "gpt-6-sol-long", name: "GPT-6 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.40, cacheWrite: 0, output: 15.00 },
+  { id: "gpt-6.1-sol", name: "GPT-6.1 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
+  { id: "gpt-6.1-sol-long", name: "GPT-6.1 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 0, output: 15.00 },
   // Google
   { id: "gemini-3.5-flash", name: "Gemini 3.5 Flash", provider: "Google", tier: "Lightweight", input: 1.50, cached: 0.15, cacheWrite: 0, output: 9.00 },
   { id: "gemini-3.6-flash[^gemini-flash-promo]", name: "Gemini 3.6 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
