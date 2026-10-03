@@ -7,7 +7,6 @@ const MODELS = [
   { id: "haiku-4.5", name: "Claude Haiku 4.5", provider: "Anthropic", tier: "Versatile", input: 1.00, cached: 0.10, cacheWrite: 1.25, output: 5.00 },
   { id: "sonnet-4", name: "Claude Sonnet 4", provider: "Anthropic", tier: "Versatile", input: 3.00, cached: 0.30, cacheWrite: 3.75, output: 15.00 },
   { id: "sonnet-4.6", name: "Claude Sonnet 4.6", provider: "Anthropic", tier: "Versatile", input: 3.00, cached: 0.30, cacheWrite: 3.75, output: 15.00 },
-  { id: "opus-4.7", name: "Claude Opus 4.7", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-4.8", name: "Claude Opus 4.8", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-5", name: "Claude Opus 5", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-5.5", name: "Claude Opus 5.5", provider: "Anthropic", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 5.00, output: 20.00 },
@@ -40,8 +39,6 @@ const MODELS = [
   { id: "gpt-6.1-sol", name: "GPT-6.1 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
   { id: "gpt-6.1-sol-long", name: "GPT-6.1 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 0, output: 15.00 },
   // Google
-  { id: "gemini-3.5-flash", name: "Gemini 3.5 Flash", provider: "Google", tier: "Lightweight", input: 1.50, cached: 0.15, cacheWrite: 0, output: 9.00 },
-  { id: "gemini-3.6-flash[^gemini-flash-promo]", name: "Gemini 3.6 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   { id: "gemini-3.7-flash[^gemini-flash-promo]", name: "Gemini 3.7 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   { id: "gemini-3.8-flash[^gemini-flash-promo]", name: "Gemini 3.8 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   // Microsoft
