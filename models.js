@@ -5,13 +5,15 @@
 const MODELS = [
   // Anthropic
   { id: "haiku-4.5", name: "Claude Haiku 4.5", provider: "Anthropic", tier: "Versatile", input: 1.00, cached: 0.10, cacheWrite: 1.25, output: 5.00 },
+  { id: "haiku-5.5", name: "Claude Haiku 5.5 (≤100K)", provider: "Anthropic", tier: "Lightweight", input: 0.10, cached: 0.01, cacheWrite: 0.125, output: 0.50 },
+  { id: "haiku-5.5-long", name: "Claude Haiku 5.5 (>100K)", provider: "Anthropic", tier: "Lightweight", input: 0.50, cached: 0.05, cacheWrite: 0.625, output: 2.50 },
   { id: "sonnet-4", name: "Claude Sonnet 4", provider: "Anthropic", tier: "Versatile", input: 3.00, cached: 0.30, cacheWrite: 3.75, output: 15.00 },
   { id: "sonnet-4.6", name: "Claude Sonnet 4.6", provider: "Anthropic", tier: "Versatile", input: 3.00, cached: 0.30, cacheWrite: 3.75, output: 15.00 },
   { id: "opus-4.8", name: "Claude Opus 4.8", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-5", name: "Claude Opus 5", provider: "Anthropic", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 6.25, output: 25.00 },
   { id: "opus-5.5", name: "Claude Opus 5.5", provider: "Anthropic", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 5.00, output: 20.00 },
   { id: "sonnet-5", name: "Claude Sonnet 5", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
-  { id: "sonnet-5.5", name: "Claude Sonnet 5.5", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.20, cacheWrite: 2.50, output: 10.00 },
+  { id: "sonnet-5.5", name: "Claude Sonnet 5.5", provider: "Anthropic", tier: "Versatile", input: 2.00, cached: 0.10, cacheWrite: 2.50, output: 10.00 },
   { id: "opus-4.8-(fast-mode)-(preview)", name: "Claude Opus 4.8 (fast mode) (preview)", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5", name: "Claude Fable 5", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5.1", name: "Claude Fable 5.1", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 0.25, cacheWrite: 12.50, output: 50.00 },
