@@ -43,6 +43,7 @@ const MODELS = [
   // Google
   { id: "gemini-3.7-flash[^gemini-flash-promo]", name: "Gemini 3.7 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   { id: "gemini-3.8-flash[^gemini-flash-promo]", name: "Gemini 3.8 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
+  { id: "gemini-4-argon[^gemini-4-argon-promo]", name: "Gemini 4 Argon[^gemini-4-argon-promo]", provider: "Google", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
   // Microsoft
   { id: "mai-code-1.1-flash", name: "MAI-Code-1.1-Flash", provider: "Microsoft", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.20 },
   // xAI
