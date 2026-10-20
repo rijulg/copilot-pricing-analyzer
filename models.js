@@ -18,14 +18,8 @@ const MODELS = [
   { id: "fable-5", name: "Claude Fable 5", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5.1", name: "Claude Fable 5.1", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 0.25, cacheWrite: 12.50, output: 50.00 },
   // OpenAI
-  { id: "gpt-5-mini", name: "GPT-5 mini", provider: "OpenAI", tier: "Lightweight", input: 0.25, cached: 0.025, cacheWrite: 0, output: 2.00 },
   { id: "gpt-5.3-codex", name: "GPT-5.3-Codex", provider: "OpenAI", tier: "Powerful", input: 1.75, cached: 0.175, cacheWrite: 0, output: 14.00 },
-  { id: "gpt-5.4", name: "GPT-5.4 (≤272K)", provider: "OpenAI", tier: "Versatile", input: 2.50, cached: 0.25, cacheWrite: 0, output: 15.00 },
-  { id: "gpt-5.4-long", name: "GPT-5.4 (>272K)", provider: "OpenAI", tier: "Versatile", input: 5.00, cached: 0.50, cacheWrite: 0, output: 22.50 },
-  { id: "gpt-5.4-mini", name: "GPT-5.4 mini", provider: "OpenAI", tier: "Lightweight", input: 0.75, cached: 0.075, cacheWrite: 0, output: 4.50 },
   { id: "gpt-5.4-nano", name: "GPT-5.4 nano", provider: "OpenAI", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.25 },
-  { id: "gpt-5.5", name: "GPT-5.5 (≤272K)", provider: "OpenAI", tier: "Powerful", input: 5.00, cached: 0.50, cacheWrite: 0, output: 30.00 },
-  { id: "gpt-5.5-long", name: "GPT-5.5 (>272K)", provider: "OpenAI", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 0, output: 45.00 },
   { id: "gpt-5.6-luna", name: "GPT-5.6 Luna (≤200K)", provider: "OpenAI", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.20 },
   { id: "gpt-5.6-luna-long", name: "GPT-5.6 Luna (>200K)", provider: "OpenAI", tier: "Lightweight", input: 0.40, cached: 0.04, cacheWrite: 0, output: 1.80 },
   { id: "gpt-5.6-sol", name: "GPT-5.6 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.40, cacheWrite: 0, output: 20.00 },
@@ -41,7 +35,6 @@ const MODELS = [
   { id: "gpt-6.1-sol", name: "GPT-6.1 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
   { id: "gpt-6.1-sol-long", name: "GPT-6.1 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 0, output: 15.00 },
   // Google
-  { id: "gemini-3.7-flash[^gemini-flash-promo]", name: "Gemini 3.7 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   { id: "gemini-3.8-flash[^gemini-flash-promo]", name: "Gemini 3.8 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   { id: "gemini-4-argon[^gemini-4-argon-promo]", name: "Gemini 4 Argon[^gemini-4-argon-promo]", provider: "Google", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
   // Microsoft
