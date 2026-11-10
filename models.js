@@ -17,6 +17,7 @@ const MODELS = [
   { id: "opus-4.8-(fast-mode)-(preview)", name: "Claude Opus 4.8 (fast mode) (preview)", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5", name: "Claude Fable 5", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 1.00, cacheWrite: 12.50, output: 50.00 },
   { id: "fable-5.1", name: "Claude Fable 5.1", provider: "Anthropic", tier: "Powerful", input: 10.00, cached: 0.25, cacheWrite: 12.50, output: 50.00 },
+  { id: "fable-5.2", name: "Claude Fable 5.2", provider: "Anthropic", tier: "Powerful", input: 8.00, cached: 0.20, cacheWrite: 10.00, output: 40.00 },
   // OpenAI
   { id: "gpt-5.3-codex", name: "GPT-5.3-Codex", provider: "OpenAI", tier: "Powerful", input: 1.75, cached: 0.175, cacheWrite: 0, output: 14.00 },
   { id: "gpt-5.4-nano", name: "GPT-5.4 nano", provider: "OpenAI", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.25 },
