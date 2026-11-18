@@ -34,6 +34,10 @@ const MODELS = [
   { id: "gpt-6.1-sol-long", name: "GPT-6.1 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 0, output: 15.00 },
   { id: "gpt-6.1-terra", name: "GPT-6.1 Terra (≤272K)", provider: "OpenAI", tier: "Versatile", input: 1.00, cached: 0.05, cacheWrite: 0, output: 5.00 },
   { id: "gpt-6.1-terra-long", name: "GPT-6.1 Terra (>272K)", provider: "OpenAI", tier: "Versatile", input: 2.00, cached: 0.10, cacheWrite: 0, output: 7.50 },
+  { id: "gpt-6.2-astra", name: "GPT-6.2 Astra (≤272K)", provider: "OpenAI", tier: "Powerful", input: 8.00, cached: 0.40, cacheWrite: 0, output: 40.00 },
+  { id: "gpt-6.2-astra-long", name: "GPT-6.2 Astra (>272K)", provider: "OpenAI", tier: "Powerful", input: 16.00, cached: 0.80, cacheWrite: 0, output: 60.00 },
+  { id: "gpt-6.2-sol", name: "GPT-6.2 Sol (≤272K)", provider: "OpenAI", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
+  { id: "gpt-6.2-sol-long", name: "GPT-6.2 Sol (>272K)", provider: "OpenAI", tier: "Powerful", input: 4.00, cached: 0.20, cacheWrite: 0, output: 15.00 },
   // Google
   { id: "gemini-3.8-flash[^gemini-flash-promo]", name: "Gemini 3.8 Flash[^gemini-flash-promo]", provider: "Google", tier: "Versatile", input: 0.75, cached: 0.075, cacheWrite: 0, output: 3.75 },
   { id: "gemini-4-argon[^gemini-4-argon-promo]", name: "Gemini 4 Argon[^gemini-4-argon-promo]", provider: "Google", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
@@ -41,6 +45,8 @@ const MODELS = [
   { id: "gemini-4-hydrogen", name: "Gemini 4 Hydrogen", provider: "Google", tier: "Versatile", input: 1.50, cached: 0.075, cacheWrite: 0, output: 7.50 },
   // Microsoft
   { id: "mai-code-1.1-flash", name: "MAI-Code-1.1-Flash", provider: "Microsoft", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.20 },
+  { id: "mai-code-2[^mai-code-2-promo]", name: "MAI Code 2[^mai-code-2-promo]", provider: "Microsoft", tier: "Powerful", input: 0.50, cached: 0.025, cacheWrite: 0, output: 2.50 },
+  { id: "mai-code-2-flash[^mai-code-2-flash-promo]", name: "MAI Code 2 Flash[^mai-code-2-flash-promo]", provider: "Microsoft", tier: "Lightweight", input: 0.05, cached: 0.005, cacheWrite: 0, output: 0.25 },
   // xAI
   { id: "grok-4.5", name: "Grok 4.5 (≤200K)", provider: "xAI", tier: "Versatile", input: 2.00, cached: 0.50, cacheWrite: 0, output: 6.00 },
   { id: "grok-4.5-long", name: "Grok 4.5 (>200K)", provider: "xAI", tier: "Versatile", input: 4.00, cached: 1.00, cacheWrite: 0, output: 12.00 },
