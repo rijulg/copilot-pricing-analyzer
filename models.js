@@ -43,6 +43,7 @@ const MODELS = [
   { id: "gemini-4-argon[^gemini-4-argon-promo]", name: "Gemini 4 Argon[^gemini-4-argon-promo]", provider: "Google", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
   { id: "gemini-4-carbon[^gemini-4-carbon-promo]", name: "Gemini 4 Carbon[^gemini-4-carbon-promo]", provider: "Google", tier: "Powerful", input: 2.00, cached: 0.10, cacheWrite: 0, output: 10.00 },
   { id: "gemini-4-hydrogen", name: "Gemini 4 Hydrogen", provider: "Google", tier: "Versatile", input: 1.50, cached: 0.075, cacheWrite: 0, output: 7.50 },
+  { id: "gemini-4-neon", name: "Gemini 4 Neon", provider: "Google", tier: "Versatile", input: 3.00, cached: 0.15, cacheWrite: 0, output: 15.00 },
   // Microsoft
   { id: "mai-code-1.1-flash", name: "MAI-Code-1.1-Flash", provider: "Microsoft", tier: "Lightweight", input: 0.20, cached: 0.02, cacheWrite: 0, output: 1.20 },
   { id: "mai-code-2[^mai-code-2-promo]", name: "MAI Code 2[^mai-code-2-promo]", provider: "Microsoft", tier: "Powerful", input: 0.50, cached: 0.025, cacheWrite: 0, output: 2.50 },
